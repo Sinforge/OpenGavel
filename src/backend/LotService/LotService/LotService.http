@@ -1,0 +1,6 @@
+@LotService_HostAddress = http://localhost:5139
+
+GET {{LotService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

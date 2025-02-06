@@ -12,4 +12,4 @@ The platform supports real-time notifications, decentralized file storage, and a
 - Decentralized file storage via IPFS
 
 ## Architecture
-![Architecture drawio](https://github.com/user-attachments/assets/2e77891a-111d-403f-b339-508174f18ee0)
+![test drawio](https://github.com/user-attachments/assets/c0f44c2c-4aab-4b27-9747-8adf211d89a1)

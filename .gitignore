@@ -1,0 +1,29 @@
+# Бинарные файлы (примеры)
+*.exe
+*.dll
+*.so
+*.a
+*.o
+*.class
+*.jar
+*.dylib
+*.bin
+*.pyc
+*.pyo
+*.pyd
+
+# Папки с зависимостями и артефактами сборки
+bin/
+obj/
+node_modules/
+venv/
+__pycache__/
+build/
+dist/
+*.app
+*.ipa
+*.apk
+
+# Специфичные для IDE/редакторов
+.vscode/
+.idea/

@@ -1,9 +1,16 @@
 ﻿namespace DomainCore;
 
-public abstract class Entity<T>(T id) : IEquatable<Entity<T>>
+public abstract class Entity<T> : IEquatable<Entity<T>>
     where T : notnull
 {
-    public T Id { get; } = id;
+    public T Id { get; }
+
+    protected Entity() { }
+
+    protected Entity(T id)
+    {
+        Id = id;
+    }
 
     public bool Equals(Entity<T>? other)
     {

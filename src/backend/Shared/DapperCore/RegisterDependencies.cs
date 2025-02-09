@@ -4,6 +4,7 @@ using DapperCore.Repository;
 using DapperCore.UoW;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace DapperCore;
 
@@ -12,7 +13,7 @@ public static class RegisterDependencies
     public static IServiceCollection AddDapperCore(this IServiceCollection services, string connectionString)
     {
         return services
-            .AddScoped<IDbConnection>(_ => new SqlConnection(connectionString))
+            .AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString))
             .AddScoped<IUnitOfWork, UnitOfWork>()
             .RegisterRepositories(Assembly.GetExecutingAssembly());
     }

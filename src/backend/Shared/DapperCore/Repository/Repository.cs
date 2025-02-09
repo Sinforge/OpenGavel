@@ -6,7 +6,7 @@ using DomainCore;
 
 namespace DapperCore.Repository;
 
-internal abstract class Repository<TDomainEntity, TPersistentEntity, TId>(
+public abstract class Repository<TDomainEntity, TPersistentEntity, TId>(
     IDbConnection connection,
     IDbTransaction transaction) : IRepository<TDomainEntity, TPersistentEntity, TId>
     where TDomainEntity : Entity<TId>

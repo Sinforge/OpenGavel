@@ -6,11 +6,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <RootNamespace>AuthService</RootNamespace>
+        <RootNamespace>AuthService.Api</RootNamespace>
+        <MapsterCodeGeneration>true</MapsterCodeGeneration>
     </PropertyGroup>
+
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+        <PackageReference Include="Mapster" Version="7.4.0" />
         <PackageReference Include="MediatR" Version="12.4.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
@@ -25,6 +28,10 @@
     <ItemGroup>
       <ProjectReference Include="..\AuthService.Application\AuthService.Application.csproj" />
       <ProjectReference Include="..\AuthService.Infrastructure\AuthService.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Validators\" />
     </ItemGroup>
 
 </Project>

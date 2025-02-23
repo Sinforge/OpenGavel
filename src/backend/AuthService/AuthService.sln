@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.Application", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperCore", "..\Shared\DapperCore\DapperCore.csproj", "{D6CC77B5-60A1-4CB4-A8D9-86AF981A2ED4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService.Migrations", "AuthService.Migrations\AuthService.Migrations.csproj", "{BC20A52E-3A9B-40A4-AAD9-2E4E6AE57F31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{D6CC77B5-60A1-4CB4-A8D9-86AF981A2ED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6CC77B5-60A1-4CB4-A8D9-86AF981A2ED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6CC77B5-60A1-4CB4-A8D9-86AF981A2ED4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC20A52E-3A9B-40A4-AAD9-2E4E6AE57F31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC20A52E-3A9B-40A4-AAD9-2E4E6AE57F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC20A52E-3A9B-40A4-AAD9-2E4E6AE57F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC20A52E-3A9B-40A4-AAD9-2E4E6AE57F31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

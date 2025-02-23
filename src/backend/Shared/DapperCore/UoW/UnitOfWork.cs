@@ -1,20 +1,25 @@
 using System.Data;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace DapperCore.UoW;
 
 public class UnitOfWork : IUnitOfWork
 {
     private readonly IDbConnection _connection;
-    private IDbTransaction _transaction;
-    private readonly IServiceProvider _serviceProvider;
+    private IDbTransaction? _transaction;
+    
+    IDbConnection IUnitOfWork.Connection => _connection;
+    IDbTransaction? IUnitOfWork.Transaction => _transaction;
 
-    public UnitOfWork(IDbConnection connection, IServiceProvider serviceProvider)
+
+    public UnitOfWork(IDbConnection connection)
     {
         _connection = connection;
         _connection.Open();
+    }
+
+    public void BeginTransaction()
+    {
         _transaction = _connection.BeginTransaction();
-        _serviceProvider = serviceProvider;
     }
 
     public void Commit()
@@ -28,9 +33,6 @@ public class UnitOfWork : IUnitOfWork
         _transaction?.Rollback();
         _transaction = _connection.BeginTransaction();
     }
-
-    public T GetRepository<T>()
-        => ActivatorUtilities.CreateInstance<T>(_serviceProvider, _connection, _transaction);
 
     public void Dispose()
     {

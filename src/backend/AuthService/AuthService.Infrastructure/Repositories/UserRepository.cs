@@ -1,39 +1,39 @@
-using System.Data;
 using AuthService.Application.Repositories;
 using AuthService.Domain.Aggregates.UserAggregate;
 using AuthService.Infrastructure.PersistentEntities;
 using Dapper;
 using DapperCore.Repository;
+using DapperCore.UoW;
 
 namespace AuthService.Infrastructure.Repositories;
 
-public class UserRepository(IDbConnection conn, IDbTransaction transaction) : 
-    Repository<User, UserPersistentEntity, Guid>(conn, transaction), IUserRepository
+public class UserRepository(IUnitOfWork unitOfWork) : 
+    Repository<User, UserPersistentEntity, Guid>(unitOfWork), IUserRepository
 {
-    public async Task<bool> ExistsByWalletAsync(string wallet)
+    public async Task<bool> ExistsByWalletAsync(string wallet, CancellationToken cancelationToken)
     {
-        const string query = "select exists (select 1 from users where wallet = @wallet)";
-
-        var parameters = new DynamicParameters();
-        parameters.Add("@wallet", wallet);
-
-        return await conn.ExecuteScalarAsync<bool>(query, parameters);
+        var sql = $"select exists (select 1 from public.{_tableName} where wallet_address = @WalletAddress)";
+        var query = GetQuery(sql, parameters: new { WalletAddress = wallet }, cancellationToken: cancelationToken);
+        return await unitOfWork.Connection.QueryFirstAsync<bool>(query);
     }
 
-    public async Task<User?> GetUserByWalletAsync(string wallet)
+    public async Task<User?> GetUserByWalletAsync(string wallet, CancellationToken cancelationToken)
     {
-        const string query = "select * from users where wallet_address = @wallet";
+        var sql = "select * from public.{_tableName} where wallet_address = @wallet";
         
-        var persistentEntity = await conn.QuerySingleOrDefaultAsync<UserPersistentEntity>(
-            query, 
-            new { wallet });
+        var query = GetQuery(sql, parameters: new { wallet }, cancellationToken: cancelationToken);
         
+        var persistentEntity = await unitOfWork.Connection.QuerySingleOrDefaultAsync<UserPersistentEntity>(query);
         if (persistentEntity == null)
             return null;
 
         return MapToDomain(persistentEntity);
     }
+
+    public Task AddUserAsync(User user, CancellationToken cancellationToken = default)
+        => AddAsync(user, cancellationToken);
     
+
     protected override UserPersistentEntity MapToPersistent(User domain)
     {
         return new UserPersistentEntity(domain.Id, domain.Wallet.Address.Value, (int)domain.Wallet.Provider);

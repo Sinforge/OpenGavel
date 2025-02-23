@@ -7,16 +7,17 @@ namespace AuthService.Infrastructure.PersistentEntities;
 public class AdminPersistentEntity
 {
     [Column("id")]
+    [Key]
     [Required]
-    public Guid Id;
+    public Guid Id { get; }
 
     [Column("email")]
     [Required]
-    public string Email;
+    public string Email { get; }
     
     [Column("password_hash")]
     [Required]
-    public string PasswordHash;
+    public string PasswordHash { get; }
 
     public AdminPersistentEntity(Guid id, string email, string passwordHash)
     {

@@ -7,16 +7,17 @@ namespace AuthService.Infrastructure.PersistentEntities;
 public class UserPersistentEntity
 {
     [Column("id")]
+    [Key]
     [Required]
-    public Guid Id;
+    public Guid Id { get; }
 
     [Column("wallet_address")]
     [Required]
-    public string WalletAddress;
+    public string WalletAddress { get; }
 
     [Column("wallet_provider")]
     [Required]
-    public int WalletProvider;
+    public int WalletProvider { get; }
 
     public UserPersistentEntity(Guid id, string walletAddress, int walletProvider)
     {

@@ -1,8 +1,13 @@
+using System.Data;
+
 namespace DapperCore.UoW;
 
 public interface IUnitOfWork : IDisposable
 {
+    void BeginTransaction();
     void Commit();
     void Rollback();
-    T GetRepository<T>();
+    
+    IDbConnection Connection { get; }
+    IDbTransaction? Transaction { get; }
 }

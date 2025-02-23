@@ -2,7 +2,6 @@ using System.Data;
 using System.Reflection;
 using DapperCore.Repository;
 using DapperCore.UoW;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -15,10 +14,10 @@ public static class RegisterDependencies
         return services
             .AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString))
             .AddScoped<IUnitOfWork, UnitOfWork>()
-            .RegisterRepositories(Assembly.GetExecutingAssembly());
+            .AddRepositories(Assembly.GetExecutingAssembly());
     }
 
-    private static IServiceCollection RegisterRepositories(this IServiceCollection services, Assembly assembly)
+    private static IServiceCollection AddRepositories(this IServiceCollection services, Assembly assembly)
     {
         var repositoryTypes = assembly.GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces().Contains(typeof(IRepository<,,>)));

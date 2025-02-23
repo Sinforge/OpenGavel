@@ -1,11 +1,16 @@
+using AuthService.Api;
+using AuthService.Application;
+using AuthService.Infrastructure;
 using DapperCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDapperCore(builder.Configuration.GetConnectionString("DefaultConnection")!);
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+var dbConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+
+builder.Services
+    .AddApi()
+    .AddApplication()
+    .AddInfrastructure(dbConnectionString);
 
 var app = builder.Build();
 
@@ -16,6 +21,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.MapControllers();
 app.Run();
 

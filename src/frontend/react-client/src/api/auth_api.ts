@@ -1,9 +1,9 @@
 import type { AuthResponse, AuthRequest } from './types';
-const API_BASE_URL = "localhost:8080"
+const API_BASE_URL = "http://localhost:5289"
 
 export const auth_api = {
-    async verifySignature(params: AuthRequest): Promise<AuthResponse> {
-        const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+    async authorize(params: AuthRequest): Promise<AuthResponse> {
+        const response = await fetch(`${API_BASE_URL}/auth`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

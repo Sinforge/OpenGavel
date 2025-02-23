@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useConnect, useAccount, useDisconnect, useSignMessage } from 'wagmi'
 import { useBalance } from 'wagmi'
+import { auth_api } from '../api/auth_api'
+import {AuthRequest, AuthResponse} from "../api/types";
 
 export default function ConnectButton() {
     const { connect, connectors, error: connectError, status: connectStatus } = useConnect()
@@ -27,8 +29,13 @@ export default function ConnectButton() {
             const message = `Register or login for OpenGavel`
             const signature = await signMessageAsync({ message })
 
-            // Здесь должна быть интеграция с бэкендом
-            console.log('Signature:', signature)
+            let request: AuthRequest = {
+                address: address,
+                signature: signature,
+                message: message
+            }
+            let response : AuthResponse = await auth_api.authorize(request);
+            console.log('Response:', response)
 
         } catch (err) {
             setAuthError('Signature error')
@@ -38,7 +45,7 @@ export default function ConnectButton() {
     if (!window.ethereum?.isMetaMask) {
         return (
             <div className="alert">
-                <p>Требуется установка MetaMask</p>
+                <p>Need to download MetaMask</p>
                 <a
                     href="https://metamask.io/download/"
                     target="_blank"

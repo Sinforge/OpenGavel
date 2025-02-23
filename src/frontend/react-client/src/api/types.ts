@@ -1,5 +1,5 @@
 export type AuthRequest = {
-    address: string
+    address: `0x${string}` | undefined
     signature: string
     message: string
 }

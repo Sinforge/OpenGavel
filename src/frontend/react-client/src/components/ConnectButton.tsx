@@ -3,13 +3,15 @@ import { useConnect, useAccount, useDisconnect, useSignMessage } from 'wagmi'
 import { useBalance } from 'wagmi'
 import { auth_api } from '../api/auth_api'
 import {AuthRequest, AuthResponse} from "../api/types";
-
+import { useAuth } from '../contexts/AuthContext';
 export default function ConnectButton() {
     const { connect, connectors, error: connectError, status: connectStatus } = useConnect()
     const { address, isConnected } = useAccount()
     const { disconnect } = useDisconnect()
     const { signMessageAsync } = useSignMessage()
     const [authError, setAuthError] = useState<string | null>(null)
+
+    const { login } = useAuth();
 
     const { data: balance } = useBalance({
         address
@@ -29,13 +31,15 @@ export default function ConnectButton() {
             const message = `Register or login for OpenGavel`
             const signature = await signMessageAsync({ message })
 
-            let request: AuthRequest = {
-                address: address,
-                signature: signature,
-                message: message
-            }
-            let response : AuthResponse = await auth_api.authorize(request);
-            console.log('Response:', response)
+            //let request: AuthRequest = {
+            //    address: address,
+            //    signature: signature,
+            //    message: message
+            //}
+            //let response : AuthResponse = await auth_api.authorize(request);
+            console.log(login)
+            login("test_token");
+            //console.log('Response:', response)
 
         } catch (err) {
             setAuthError('Signature error')

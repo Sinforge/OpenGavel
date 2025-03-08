@@ -1,4 +1,4 @@
-using AuthService.Domain.Aggregates.UserAggregate;
+using AuthService.Domain.Entities;
 
 namespace AuthService.Application.Repositories;
 

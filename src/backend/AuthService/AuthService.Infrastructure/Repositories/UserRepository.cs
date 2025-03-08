@@ -1,5 +1,6 @@
 using AuthService.Application.Repositories;
-using AuthService.Domain.Aggregates.UserAggregate;
+using AuthService.Domain.Entities;
+using AuthService.Domain.ValueObjects;
 using AuthService.Infrastructure.PersistentEntities;
 using Dapper;
 using DapperCore.Repository;

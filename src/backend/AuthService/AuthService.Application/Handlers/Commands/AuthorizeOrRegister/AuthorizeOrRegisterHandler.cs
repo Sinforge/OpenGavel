@@ -1,7 +1,8 @@
 using AuthService.Application.Exceptions;
 using AuthService.Application.Repositories;
 using AuthService.Application.Services;
-using AuthService.Domain.Aggregates.UserAggregate;
+using AuthService.Domain.Entities;
+using AuthService.Domain.ValueObjects;
 using DapperCore.UoW;
 using MediatR;
 

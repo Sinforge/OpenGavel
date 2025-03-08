@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Shared\DomainCore\DomainCore.csproj" />
+      <ProjectReference Include="..\..\Shared\DapperCore\DapperCore.csproj" />
+      <ProjectReference Include="..\LotService.Application\LotService.Application.csproj" />
+      <ProjectReference Include="..\LotService.Domain\LotService.Domain.csproj" />
     </ItemGroup>
 
 </Project>

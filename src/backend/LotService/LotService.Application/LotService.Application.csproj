@@ -7,7 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Shared\DomainCore\DomainCore.csproj" />
+      <ProjectReference Include="..\..\Shared\DapperCore\DapperCore.csproj" />
+      <ProjectReference Include="..\LotService.Domain\LotService.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MediatR" Version="12.4.1" />
     </ItemGroup>
 
 </Project>

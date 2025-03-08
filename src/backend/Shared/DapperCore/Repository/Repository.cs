@@ -42,11 +42,11 @@ public abstract class Repository<TDomainEntity, TPersistentEntity, TId>
     
     protected CommandDefinition GetQuery(string sql, IDbTransaction? dbTransaction = null, object? parameters = null, CancellationToken cancellationToken = default) =>
         new(sql, parameters: parameters, cancellationToken: cancellationToken, transaction: dbTransaction);
-    
+
     protected abstract TPersistentEntity MapToPersistent(TDomainEntity domainEntity);
     protected abstract TDomainEntity MapToDomain(TPersistentEntity persistentEntity);
 
-    private string GenerateDeleteSql()
+    protected virtual string GenerateDeleteSql()
     {
         var idColumnName = typeof(TPersistentEntity)
             .GetProperties()
@@ -54,7 +54,7 @@ public abstract class Repository<TDomainEntity, TPersistentEntity, TId>
             .GetCustomAttribute<ColumnAttribute>()!.Name;
         return $"delete from public.{_tableName} where {idColumnName} = @Id";
     }
-    private string GenerateInsertSql()
+    protected virtual string GenerateInsertSql()
     {
         var persistentProperties = typeof(TPersistentEntity)
             .GetProperties()

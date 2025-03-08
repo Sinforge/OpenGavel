@@ -1,0 +1,30 @@
+services:
+  lot-db:
+    image: postgres:latest
+    container_name: lot-db
+    environment:
+      POSTGRES_DB: lot
+      POSTGRES_USER: lot
+      POSTGRES_PASSWORD: lot
+    ports:
+      - "5432:5432"
+    volumes:
+      - lot-db-data:/var/lib/postgresql/data
+
+
+  auth-db:
+    image: postgres:latest
+    container_name: auth-db
+    environment:
+      POSTGRES_DB: auth
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: auth
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+
+
+volumes:
+  lot-db-data:
+  auth-db-data:

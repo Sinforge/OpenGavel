@@ -1,6 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainService", "BlockchainService\BlockchainService.csproj", "{BE40022E-EBCA-4BE8-A600-686D2810C212}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainService.Api", "BlockchainService.Api\BlockchainService.Api.csproj", "{BE40022E-EBCA-4BE8-A600-686D2810C212}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainService.Application", "BlockchainService.Application\BlockchainService.Application.csproj", "{F8210B03-4D3D-4B39-B26C-441C995F1D77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainService.Infrastructure", "BlockchainService.Infrastructure\BlockchainService.Infrastructure.csproj", "{FCB9E692-0FDC-4D46-88F5-712B99F189D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainService.Domain", "BlockchainService.Domain\BlockchainService.Domain.csproj", "{8321BCC8-4F87-402B-9270-226C0A7A020B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +18,17 @@ Global
 		{BE40022E-EBCA-4BE8-A600-686D2810C212}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE40022E-EBCA-4BE8-A600-686D2810C212}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE40022E-EBCA-4BE8-A600-686D2810C212}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8210B03-4D3D-4B39-B26C-441C995F1D77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8210B03-4D3D-4B39-B26C-441C995F1D77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8210B03-4D3D-4B39-B26C-441C995F1D77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8210B03-4D3D-4B39-B26C-441C995F1D77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCB9E692-0FDC-4D46-88F5-712B99F189D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCB9E692-0FDC-4D46-88F5-712B99F189D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCB9E692-0FDC-4D46-88F5-712B99F189D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCB9E692-0FDC-4D46-88F5-712B99F189D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8321BCC8-4F87-402B-9270-226C0A7A020B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8321BCC8-4F87-402B-9270-226C0A7A020B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8321BCC8-4F87-402B-9270-226C0A7A020B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8321BCC8-4F87-402B-9270-226C0A7A020B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

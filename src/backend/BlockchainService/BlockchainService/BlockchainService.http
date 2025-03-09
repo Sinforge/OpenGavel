@@ -1,6 +1,0 @@
-@BlockchainService_HostAddress = http://localhost:5001
-
-GET {{BlockchainService_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

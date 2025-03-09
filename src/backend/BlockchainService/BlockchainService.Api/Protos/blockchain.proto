@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package blockchain_service;
+option csharp_namespace = "GrpcBlockchainService";
+
+service BlockchainService {
+  rpc GetBlindAuctionContract(google.protobuf.Empty) returns (GetContractResponse);
+  rpc GetEnglishAuctionContract(google.protobuf.Empty) returns (GetContractResponse);
+}
+
+message GetContractResponse {
+  oneof result {
+    ContractData contract = 1;
+    google.protobuf.Empty not_found = 2;
+  }
+  
+  message ContractData {
+    string bytecode = 1;
+    string abi = 2;
+  }
+}

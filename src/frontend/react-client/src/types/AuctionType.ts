@@ -1,7 +1,6 @@
 enum AuctionType {
-    BLIND = 'blind',
-    ENGLISH = 'english',
-    DUTCH = 'dutch',
+    BLIND = "BLIND",
+    ENGLISH = 'ENGLISH',
 }
 
 export default AuctionType;

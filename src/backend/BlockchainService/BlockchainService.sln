@@ -8,6 +8,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainService.Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainService.Domain", "BlockchainService.Domain\BlockchainService.Domain.csproj", "{8321BCC8-4F87-402B-9270-226C0A7A020B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DapperCore", "..\Shared\DapperCore\DapperCore.csproj", "{AF84FE8E-DF7D-4CF9-9B0B-BDC67F3E93BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainCore", "..\Shared\DomainCore\DomainCore.csproj", "{9E61E88A-6E5C-4E85-AF9A-338CA100038C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workers", "Workers", "{A070EAE2-CA3E-4752-9465-DC85C39FF23C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainService.TransactionWorker", "Workers\BlockchainService.TransactionWorker\BlockchainService.TransactionWorker.csproj", "{5F5C2CD7-8618-4CE1-BFA8-206AD05FA4CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +38,20 @@ Global
 		{8321BCC8-4F87-402B-9270-226C0A7A020B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8321BCC8-4F87-402B-9270-226C0A7A020B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8321BCC8-4F87-402B-9270-226C0A7A020B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF84FE8E-DF7D-4CF9-9B0B-BDC67F3E93BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF84FE8E-DF7D-4CF9-9B0B-BDC67F3E93BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF84FE8E-DF7D-4CF9-9B0B-BDC67F3E93BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF84FE8E-DF7D-4CF9-9B0B-BDC67F3E93BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E61E88A-6E5C-4E85-AF9A-338CA100038C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E61E88A-6E5C-4E85-AF9A-338CA100038C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E61E88A-6E5C-4E85-AF9A-338CA100038C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E61E88A-6E5C-4E85-AF9A-338CA100038C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F5C2CD7-8618-4CE1-BFA8-206AD05FA4CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F5C2CD7-8618-4CE1-BFA8-206AD05FA4CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F5C2CD7-8618-4CE1-BFA8-206AD05FA4CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F5C2CD7-8618-4CE1-BFA8-206AD05FA4CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5F5C2CD7-8618-4CE1-BFA8-206AD05FA4CE} = {A070EAE2-CA3E-4752-9465-DC85C39FF23C}
 	EndGlobalSection
 EndGlobal

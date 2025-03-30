@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="MediatR" Version="12.4.1" />
+        <PackageReference Include="Mapster" Version="7.4.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
         <PackageReference Include="Google.Protobuf" Version="3.27.2" />
@@ -32,10 +33,6 @@
     <ItemGroup>
       <ProjectReference Include="..\BlockchainService.Application\BlockchainService.Application.csproj" />
       <ProjectReference Include="..\BlockchainService.Infrastructure\BlockchainService.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Protobuf Include="Protos\blockchain.proto" GrpcServices="Server" />
     </ItemGroup>
 
 

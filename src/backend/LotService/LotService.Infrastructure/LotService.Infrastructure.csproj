@@ -12,4 +12,8 @@
       <ProjectReference Include="..\LotService.Domain\LotService.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />
+    </ItemGroup>
+
 </Project>

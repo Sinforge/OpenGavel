@@ -1,0 +1,3 @@
+namespace LotService.Application.Handlers.Queries.GetUserAuctions;
+
+public sealed record GetUserAuctionsResponse(IReadOnlyCollection<GetUserAuctionsAuctionDto> Auctions);

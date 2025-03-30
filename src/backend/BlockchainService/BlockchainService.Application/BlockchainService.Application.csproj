@@ -8,9 +8,11 @@
 
     <ItemGroup>
       <PackageReference Include="MediatR" Version="12.4.1" />
+      <PackageReference Include="Nethereum.Web3" Version="4.29.0" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Shared\DapperCore\DapperCore.csproj" />
       <ProjectReference Include="..\BlockchainService.Domain\BlockchainService.Domain.csproj" />
     </ItemGroup>
 

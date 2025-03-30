@@ -1,0 +1,1 @@
+global using AuctionEntity = LotService.Domain.Entities.Auction;

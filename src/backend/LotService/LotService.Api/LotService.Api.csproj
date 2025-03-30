@@ -23,10 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\Commands\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\LotService.Application\LotService.Application.csproj" />
       <ProjectReference Include="..\LotService.Infrastructure\LotService.Infrastructure.csproj" />
     </ItemGroup>

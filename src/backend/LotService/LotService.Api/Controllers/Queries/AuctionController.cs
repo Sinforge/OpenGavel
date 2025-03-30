@@ -1,37 +1,54 @@
-using LotService.Api.Contracts.Auction.AddBlindAuction;
-using LotService.Api.Contracts.Auction.AddEnglishAuction;
-using LotService.Api.Contracts.Base;
-using LotService.Application.Handlers.Commands.Auction.AddBlindAuction;
-using LotService.Application.Handlers.Commands.Auction.AddEnglishAuction;
+using LotService.Api.Contracts.Auction.GetAuctionById;
+using LotService.Api.Contracts.Auction.GetUserAuctions;
+using LotService.Application.Handlers.Queries.GetAuctionInfo;
+using LotService.Application.Handlers.Queries.GetAuctionOptions;
+using LotService.Application.Handlers.Queries.GetUserAuctions;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using GetUserAuctionsResponse = LotService.Api.Contracts.Auction.GetUserAuctions.GetUserAuctionsResponse;
 
 namespace LotService.Api.Controllers.Queries;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/queries/[controller]")]
 public class AuctionController(IMediator mediator, IMapper mapper) : ControllerBase
 {
-    [HttpPost("blind")]
-    [ProducesResponseType<IdModel<Guid>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> AddBlindAuctionAsync(
-        [FromBody] AddBlindAuctionRequest request, CancellationToken cancellationToken)
+    [HttpGet("{id:guid}/deploy")]
+    [ProducesResponseType<object>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAuctionDeployOptionsAsync(
+        [FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var query = mapper.Map<AddBlindAuctionCommand>(request);
+        var query = new GetAuctionOptionsQuery(id);
+        
         var response = await mediator.Send(query, cancellationToken);
         
         return Ok(response);
     }
     
-    [HttpPost("english")]
-    [ProducesResponseType<IdModel<Guid>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> AddEnglishAuctionAsync(
-        [FromBody] AddEnglishAuctionRequest request, CancellationToken cancellationToken)
+    
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType<GetAuctionResponse>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAuctionAsync(
+        [FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var query = mapper.Map<AddEnglishAuctionCommand>(request);
+        var query = new GetAuctionInfoQuery(id);
+        
         var response = await mediator.Send(query, cancellationToken);
         
-        return Ok(response);
+        return Ok(mapper.Map<GetAuctionResponse>(response));
+    }
+    
+    
+    [HttpPost("my")]
+    [ProducesResponseType<GetAuctionResponse>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserAuctionsAsync(
+        [FromBody] GetUserAuctionsRequest request, CancellationToken cancellationToken)
+    {
+        var query = mapper.Map<GetUserAuctionsQuery>(request);
+        
+        var response = await mediator.Send(query, cancellationToken);
+        
+        return Ok(mapper.Map<GetUserAuctionsResponse>(response));
     }
 }

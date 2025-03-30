@@ -13,10 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Dao\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\BlockchainService.Application\BlockchainService.Application.csproj" />
     </ItemGroup>
 

@@ -1,28 +1,51 @@
-import axios from 'axios'
+import axios, {AxiosInstance} from 'axios';
 
-const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL
+const commonConfig = {
+    withCredentials: true,
+    timeout: 10000,
+};
+
+export const authAxios = axios.create({
+    ...commonConfig,
+    baseURL: "http://localhost:5000",
 });
 
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('jwt_token') || '';
-    if(token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    return config;
+export const lotAxios = axios.create({
+    ...commonConfig,
+    baseURL: "http://localhost:5139/api/v1/",
 });
 
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if(error.response?.status === 401) {
-            localStorage.removeItem('jwt_token');
-            window.location.href = '/login';
+export const blockAxios = axios.create({
+    ...commonConfig,
+    baseURL: "http://localhost:5001/api/v1/",
+});
+
+
+/*
+const setupProtectedApi = (instance : AxiosInstance) => {
+    instance.interceptors.request.use((config) => {
+        const token = localStorage.getItem('jwt_token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
         }
+        return config;
+    });
 
-        return Promise.reject(error)
-    }
-);
+    instance.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (error.response?.status === 401) {
+                localStorage.removeItem('jwt_token');
+                window.location.href = '/login?reason=session_expired';
+            }
+            return Promise.reject(error);
+        }
+    );
 
-export default api;
+    return instance;
+};
+
+setupProtectedApi(authAxios);
+setupProtectedApi(lotAxios);
+*/
+

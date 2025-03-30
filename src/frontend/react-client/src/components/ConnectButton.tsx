@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useConnect, useAccount, useDisconnect, useSignMessage } from 'wagmi'
 import { useBalance } from 'wagmi'
-import { auth_api } from '../api/auth_api'
+import { AuthApi } from '../api/auth_api'
 import {AuthRequest, AuthResponse} from "../api/types";
 import { useAuth } from '../contexts/AuthContext';
 export default function ConnectButton() {

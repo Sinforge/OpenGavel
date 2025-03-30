@@ -1,3 +1,6 @@
+using Mapster;
+using MapsterMapper;
+
 namespace BlockchainService;
 
 public static class RegisterDependencies
@@ -6,7 +9,8 @@ public static class RegisterDependencies
     {
         return services
             .AddGrpcServices()
-            .AddRestServices();
+            .AddRestServices()
+            .AddMappers();
     }
 
     private static IServiceCollection AddGrpcServices(this IServiceCollection services)
@@ -19,4 +23,13 @@ public static class RegisterDependencies
     => services.AddEndpointsApiExplorer()
         .AddSwaggerGen()
         .AddControllers().Services;
+    
+    private static IServiceCollection AddMappers(this IServiceCollection services)
+    {
+        var config = TypeAdapterConfig.GlobalSettings;
+        config.Scan(typeof(IAssemblyMarker).Assembly);
+
+        var mapperConfig = new Mapper(config);
+        return services.AddSingleton<IMapper>(mapperConfig);
+    }
 }

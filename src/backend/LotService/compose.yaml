@@ -1,0 +1,6 @@
+﻿services:
+  lotservice.api:
+    image: lotservice.api
+    build:
+      context: .
+      dockerfile: LotService.Api/Dockerfile

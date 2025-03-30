@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using LotService.Application;
 using Mapster;
 using MapsterMapper;
@@ -24,7 +26,13 @@ public static class RegisterDependencies
 
     private static IServiceCollection AddCommon(this IServiceCollection services)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddJsonOptions(options => 
+            {
+                options.JsonSerializerOptions.Converters.Add(
+                    new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseUpper)
+                );
+            });        
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         return services;

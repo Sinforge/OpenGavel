@@ -11,33 +11,21 @@ services:
     volumes:
       - lot-db-data:/var/lib/postgresql/data
 
-
-  auth-db:
-    image: postgres:latest
-    container_name: auth-db
-    environment:
-      POSTGRES_DB: auth
-      POSTGRES_USER: auth
-      POSTGRES_PASSWORD: auth
-    ports:
-      - "5433:5432"
-    volumes:
-      - auth-db-data:/var/lib/postgresql/data
-    
-  mongo:
-    image: mongo:latest
-    container_name: mongodb
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-
-
+#  lotservice.api:
+#    image: lotservice.api
+#    depends_on:
+#      - lot-db
+#    restart: on-failure
+#    healthcheck:
+#      test: [ “CMD”, “curl”, “-f”, “http://localhost:8080” ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3      
+#    environment:
+#      ConnectionString: "Host=lot-db;Port=5432;Database=lot;User Id=lot;Password=lot"
+#    build:
+#      context: .
+#      dockerfile: LotService.Api/Dockerfile
+      
 volumes:
   lot-db-data:
-  auth-db-data:
-  mongodb_data:

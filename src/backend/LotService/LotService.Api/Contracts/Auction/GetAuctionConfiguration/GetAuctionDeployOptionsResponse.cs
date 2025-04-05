@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace LotService.Api.Contracts.Auction;
+namespace LotService.Api.Contracts.Auction.GetAuctionConfiguration;
 
 public sealed record GetAuctionDeployOptionsResponse(
     [property: JsonPropertyName("ownerAddress")] string OwnerAddress,

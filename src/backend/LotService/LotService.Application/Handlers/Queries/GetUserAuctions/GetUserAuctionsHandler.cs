@@ -1,3 +1,4 @@
+using System.Text.Json;
 using LotService.Application.Repositories;
 using LotService.Domain.ValueObjects;
 using MediatR;
@@ -5,8 +6,8 @@ using MediatR;
 namespace LotService.Application.Handlers.Queries.GetUserAuctions;
 
 internal class GetUserAuctionsHandler(
-    IAuctionRepository auctionRepository
-    ) : IRequestHandler<GetUserAuctionsQuery, GetUserAuctionsResponse>
+    IAuctionRepository auctionRepository) 
+    : IRequestHandler<GetUserAuctionsQuery, GetUserAuctionsResponse>
 {
     public async Task<GetUserAuctionsResponse> Handle(GetUserAuctionsQuery request, CancellationToken cancellationToken)
     {
@@ -19,7 +20,8 @@ internal class GetUserAuctionsHandler(
                 x.ContractAddress?.Value,
                 x.Title,
                 x.Status,
-                x.Type
+                x.Type,
+                JsonSerializer.Deserialize<object>((string)x.Configuration)
             ))
             .ToList();
         

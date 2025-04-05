@@ -8,5 +8,6 @@ public sealed record GetUserAuctionsAuctionDto(
     [property: JsonPropertyName("contractAddress")] string? ContractAddress,
     [property: JsonPropertyName("title")] string Title,
     [property: JsonPropertyName("status")] AuctionStatus Status,
-    [property: JsonPropertyName("type")] AuctionType Type
+    [property: JsonPropertyName("type")] AuctionType Type,
+    [property: JsonPropertyName("configuration")] object Configuration
 );

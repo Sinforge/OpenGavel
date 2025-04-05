@@ -7,5 +7,6 @@ public sealed record GetUserAuctionsAuctionDto(
     string? ContractAddress,
     string Title,
     AuctionStatus Status,
-    AuctionType Type
+    AuctionType Type,
+    object Configuration
 );

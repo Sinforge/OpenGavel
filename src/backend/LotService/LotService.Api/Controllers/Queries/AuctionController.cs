@@ -41,7 +41,7 @@ public class AuctionController(IMediator mediator, IMapper mapper) : ControllerB
     
     
     [HttpPost("my")]
-    [ProducesResponseType<GetAuctionResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<GetUserAuctionsResponse>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUserAuctionsAsync(
         [FromBody] GetUserAuctionsRequest request, CancellationToken cancellationToken)
     {

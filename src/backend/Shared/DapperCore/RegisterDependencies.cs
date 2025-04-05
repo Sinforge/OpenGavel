@@ -1,4 +1,5 @@
 using System.Data;
+using DapperCore.ConnectionFactory;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -9,6 +10,6 @@ public static class RegisterDependencies
     public static IServiceCollection AddDapperCore(this IServiceCollection services, string connectionString)
     {
         return services
-            .AddSingleton<IDbConnection>(_ => new NpgsqlConnection(connectionString));
+            .AddSingleton<PostgresConnectionFactory>(_ => new PostgresConnectionFactory(connectionString));
     }
 }

@@ -13,7 +13,6 @@
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx",
-    "types": ["wagmi/global", "react/next", "react-dom/next"]
   },
   "include": [
     "src",

@@ -1,5 +1,6 @@
 using System.Data;
 using Dapper;
+using DapperCore.ConnectionFactory;
 using LotService.Application.Repositories;
 using LotService.Domain.Entities;
 using LotService.Domain.Enums;
@@ -8,9 +9,9 @@ using LotService.Infrastructure.Dao;
 
 namespace LotService.Infrastructure.Repositories;
 
-public class AuctionRepository(IDbConnection connection) : IAuctionRepository
+public class AuctionRepository(PostgresConnectionFactory connectionFactory) : IAuctionRepository
 {
-    public Task AddAsync(Auction auction, CancellationToken cancellationToken)
+    public async Task AddAsync(Auction auction, CancellationToken cancellationToken)
     {
         const string sql = """
                            insert into auctions (
@@ -36,7 +37,9 @@ public class AuctionRepository(IDbConnection connection) : IAuctionRepository
             cancellationToken: cancellationToken,
             parameters: @params);
 
-        return connection.ExecuteAsync(query);
+        await using var connection = connectionFactory.GetConnection();
+
+        await connection.ExecuteAsync(query);
     }
 
     public async Task<Auction?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -50,12 +53,14 @@ public class AuctionRepository(IDbConnection connection) : IAuctionRepository
             parameters: new { Id = id },
             cancellationToken: cancellationToken);
 
+        await using var connection = connectionFactory.GetConnection();
+
         var result = await connection.QuerySingleOrDefaultAsync<AuctionDao?>(query);
 
         return result?.ToDomain();
     }
 
-    public Task UpdateStatusAsync(Guid id, AuctionStatus status, CancellationToken cancellationToken)
+    public async Task UpdateStatusAsync(Guid id, AuctionStatus status, CancellationToken cancellationToken)
     {
         const string sql = """
                            update auctions set status = @Status where id = @Id;
@@ -66,7 +71,9 @@ public class AuctionRepository(IDbConnection connection) : IAuctionRepository
             parameters: new { Id = id, Status = status },
             cancellationToken: cancellationToken);
 
-        return connection.ExecuteAsync(query);
+        await using var connection = connectionFactory.GetConnection();
+        
+        await connection.ExecuteAsync(query);
     }
 
     public async Task<IReadOnlyCollection<Auction>> GetByUserAsync(BlockchainAddress userAddress,
@@ -80,6 +87,8 @@ public class AuctionRepository(IDbConnection connection) : IAuctionRepository
             parameters: new { Address = userAddress.Value },
             cancellationToken: cancellationToken);
 
+        await using var connection = connectionFactory.GetConnection();
+        
         var result = await connection.QueryAsync<AuctionDao>(query);
 
         return result.Select(x => x.ToDomain()).ToList();

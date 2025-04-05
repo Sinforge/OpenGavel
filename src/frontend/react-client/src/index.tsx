@@ -1,24 +1,15 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { WagmiProvider } from 'wagmi'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { config } from './configs/wagmi'
-import App from './App'
-import { AuthProvider } from './contexts/AuthContext'
-import { BrowserRouter as Router } from 'react-router-dom';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { App } from './app';
 
-const queryClient = new QueryClient()
+const root = ReactDOM.createRoot(
+    document.getElementById('root') as HTMLElement
+);
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+console.log("start render")
+
+root.render(
     <React.StrictMode>
-        <WagmiProvider config={config}>
-            <QueryClientProvider client={queryClient}>
-                <AuthProvider>
-                    <Router>
-                        <App />
-                    </Router>
-                </AuthProvider>
-            </QueryClientProvider>
-        </WagmiProvider>
+        <App />
     </React.StrictMode>
-)
+);

@@ -10,7 +10,7 @@ var host = Host.CreateDefaultBuilder()
             .AddFluentMigratorCore()
             .ConfigureRunner(rb => rb
                 .AddPostgres()
-                .WithGlobalConnectionString("Host=localhost;Port=5432;Database=test;Username=user;Password=postgres;")
+                .WithGlobalConnectionString("Host=localhost;Port=5433;Database=auth;Username=auth;Password=auth;")
                 .ScanIn(typeof(IAssemblyMarker).Assembly).For.Migrations())
             .AddLogging(lb => lb.AddFluentMigratorConsole());
     })

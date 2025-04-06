@@ -1,20 +1,26 @@
-import {Box, Button, Chip, List, ListItem, Paper, Typography} from "@mui/material";
-import {useAccount} from 'wagmi';
+import {Box, Button, Chip, CircularProgress, List, ListItem, Paper, Typography} from "@mui/material";
 import {Link} from "react-router-dom";
-import {GetUserAuctionsAuctionModel} from "../../../shared/api/types";
+import { GetUserAuctionsAuctionModel } from "../../../shared/api/types";
 import {useGetUserAuctionsQuery} from "../../../shared/api/auctionApi";
 import {AuctionType} from "../../../entities/AuctionType";
 import {AuctionStatus} from "../../../entities/AuctionStatus";
+import {useWalletClient} from "wagmi";
+import {BlindAuctionConfiguration, EnglishAuctionConfiguration} from "../../../entities/AuctionConfiguration";
+import {deployContract} from "viem/actions";
 
 type ContractInfo = {
-    bytecode: `0x${string}`
+    bytecode: string
     abi: any
 }
 
 export const UserAuctionsPage = () => {
-    console.log("test")
-    const { address: userAddress } = useAccount();
-    const {data: auctions} = useGetUserAuctionsQuery({address: userAddress})
+    const { data: walletClient } = useWalletClient();
+    const account = walletClient?.account;
+    const { data } = useGetUserAuctionsQuery({address: account?.address });
+
+    if(data === undefined)
+        return <CircularProgress></CircularProgress>
+
 
     const getContractInfo = async (type: AuctionType) : Promise<ContractInfo> => {
         let path: string;
@@ -32,23 +38,22 @@ export const UserAuctionsPage = () => {
 
     const handleDeploy = async (auction: GetUserAuctionsAuctionModel) => {
             const contractInfo = await getContractInfo(auction.type);
+            const config = auction.type === AuctionType.ENGLISH
+                ? new EnglishAuctionConfiguration(auction.configuration)
+                : new BlindAuctionConfiguration(auction.configuration);
 
-            console.log(typeof auction.configuration);
+            const constructorParams = config.getContractArgs();
 
-            console.log(auction)
-            const constructorParams = auction.configuration.getContractArgs();
-            console.log(constructorParams);
-           /*const walletClient = createWalletClient({
-                transport: custom({}),
-                chain: sepolia,
-            })
-            const [account] = await walletClient.getAddresses();
-            const txHash = await deployContract(walletClient, {
+            console.log(`0x${contractInfo.bytecode}`);
+            console.log(contractInfo);
+            const txHash = await deployContract(walletClient!, {
                 abi: contractInfo.abi,
-                bytecode: contractInfo.bytecode,
+                bytecode: `0x${contractInfo.bytecode}`,
                 args: constructorParams,
-                account,
-            });*/
+                account: account!.address
+            });
+
+            console.log(txHash);
     };
 
     const getStatusColor = (status: AuctionStatus) => {
@@ -60,13 +65,13 @@ export const UserAuctionsPage = () => {
         }
     };
 
-    if (!userAddress) {
+    /*if (!userAddress) {
         return (
             <Box sx={{ p: 3, textAlign: 'center' }}>
                 <Typography color="error">Please connect your wallet</Typography>
             </Box>
         );
-    }
+    }*/
 
     return (
         <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
@@ -79,9 +84,9 @@ export const UserAuctionsPage = () => {
             </Button>
 
 
-            <Paper elevation={3}>
+           <Paper elevation={3}>
                 <List>
-                    {auctions!.auctions.map((auction) => (
+                    {data!.auctions.map((auction) => (
                         <ListItem
                             key={auction.id}
                             sx={{
@@ -115,16 +120,9 @@ export const UserAuctionsPage = () => {
                                 color="primary"
                                 onClick={() => handleDeploy(auction)}
                             >
-                            </Button>
-                            {auction.status === AuctionStatus.PENDING && (
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={() => handleDeploy(auction)}
-                                >
+                                Deploy
 
-                                </Button>
-                            )}
+                            </Button>
                         </ListItem>
                     ))}
                 </List>

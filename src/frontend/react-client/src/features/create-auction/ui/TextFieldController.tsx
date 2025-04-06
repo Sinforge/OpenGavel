@@ -8,7 +8,7 @@ interface Props {
     type: string
 }
 
-export const TextFieldController : React.FC<Props> = ({name, label, type}) =>
+export const TextFieldController: React.FC<Props> = ({ name, label, type }) => (
     <Controller
         name={name}
         render={({ field, fieldState }) => (
@@ -17,13 +17,18 @@ export const TextFieldController : React.FC<Props> = ({name, label, type}) =>
                 fullWidth
                 required
                 label={label}
-                hiddenLabel={true}
+                hiddenLabel
                 margin="normal"
                 type={type}
                 rows={1}
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
+                value={field.value ?? ''} // явно controlled
+                onChange={(e) => {
+                    const val = e.target.value;
+                    field.onChange(type === 'number' ? (val === '' ? '' : Number(val)) : val);
+                }}
             />
         )}
-    />;
-
+    />
+);

@@ -3,7 +3,7 @@ import {EthAddress} from "../../../shared/api/types";
 
 export type AuctionFormData = {
     auctionType: AuctionType;
-    ownerAddress: EthAddress;
+    ownerAddress: EthAddress | string;
     title: string;
     description: string;
     startTime: string;

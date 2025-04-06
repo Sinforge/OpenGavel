@@ -11,25 +11,25 @@ import {BlindAuctionForm} from './BlindAuctionForm';
 import {
     AuctionConfiguration,
     BlindAuctionConfiguration,
-    CreateAuctionRequest,
-    EnglishAuctionConfiguration
+    EnglishAuctionConfiguration,
+    CreateAuctionRequest, EthAddress,
 } from "../../../shared/api/types";
 import {parseEther} from 'viem';
 import {TextFieldController} from "../../../features/create-auction/ui/TextFieldController";
 import {AuctionTypeToggleFieldController} from "../../../features/create-auction/ui/ToggleFieldController";
 import {AuctionType} from "../../../entities/AuctionType";
 import {AuctionFormData} from "../model/AuctionFormData";
-import {schema} from "../model/schemas";
 import {useCreateAuctionMutation } from "../../../shared/api/auctionApi";
 import {EnglishAuctionForm} from "./EnglishAuctionForm";
+import {useAccount} from "wagmi";
 
 const fields = [
     {name: "title", label: "Lot name", type: "text"},
     {name: "description", label: "Description", type: "text"},
-    {name: "startTime", label: "Start time", type: "text"},
+    {name: "startTime", label: "Start time", type: "date"},
     {name: "endTime", label: "End time", type: "date"},
-    {name: "startPrice", label: "Start price", type: "date"}
-]
+    {name: "startPrice", label: "Start price", type: "text"}
+];
 
 export const CreateAuctionPage = () => {
     const methods = useForm<AuctionFormData>({
@@ -41,51 +41,64 @@ export const CreateAuctionPage = () => {
             startTime: '',
             endTime: '',
             startPrice: '',
+            bidAmount: 0,     // ← чтобы был controlled
+            bidStep: 0,        // ← чтобы был controlled
         },
-        resolver: yupResolver(schema) as any, // Временное решение для типов
+        //resolver: yupResolver(schema),
         shouldUnregister: true,
     });
 
-    const [createAuction] = useCreateAuctionMutation();
+    const account = useAccount();
 
+    const [createAuction] = useCreateAuctionMutation();
     const {handleSubmit, watch} = methods;
     const auctionType = watch('auctionType');
 
     const onSubmit: SubmitHandler<AuctionFormData> = async (data) => {
         let configuration: AuctionConfiguration;
+        console.log('Creating auction');
+        console.log(account.address);
 
         switch (data.auctionType) {
             case AuctionType.BLIND:
-                configuration = new BlindAuctionConfiguration(
-                    data.ownerAddress,
-                    data.title,
-                    parseEther(`${data.startPrice}`).toString(),
-                    +new Date(data.endTime),
-                    Number(data.bidAmount))
+                configuration = {
+                    _owner: account.address,
+                    _itemName: data.title,
+                    _startPrice: parseEther(data.startPrice.toString()).toString(),
+                    _endTimestamp: +new Date(data.endTime),
+                    _maximumBids: Number(data.bidAmount),
+                } as BlindAuctionConfiguration;
                 break;
 
             case AuctionType.ENGLISH:
-                configuration = new EnglishAuctionConfiguration(
-                    data.ownerAddress,
-                    data.title,
-                    parseEther(`${data.startPrice}`).toString(),
-                    +new Date(data.endTime))
+                configuration = {
+                    _owner: account.address,
+                    _itemName: data.title,
+                    _startPrice: parseEther(data.startPrice.toString()).toString(),
+                    _endTimestamp: +new Date(data.endTime),
+                } as EnglishAuctionConfiguration;
                 break;
+
             default:
                 throw new Error('Unsupported auction type');
         }
+
         const request: CreateAuctionRequest = {
-            ownerAddress: data.ownerAddress,
+            ownerAddress: account.address,
             title: data.title,
             description: data.description,
             startTime: new Date(data.startTime),
             endTime: new Date(data.endTime),
             type: data.auctionType,
             configuration: configuration,
-        }
+        };
 
-        const newAuction = await createAuction(request).unwrap();
-        console.log('Auction created:', newAuction);
+        try {
+            const newAuction = await createAuction(request).unwrap();
+            console.log('Auction created:', newAuction);
+        } catch (error) {
+            console.error('Auction creation failed:', error);
+        }
     };
 
     return (
@@ -97,11 +110,14 @@ export const CreateAuctionPage = () => {
             <FormProvider {...methods}>
                 <Paper sx={{p: 3}} component="form" onSubmit={handleSubmit(onSubmit)}>
                     <AuctionTypeToggleFieldController/>
-                    {fields.map((fieldData) =>
+
+                    {fields.map((fieldData) => (
                         <TextFieldController
+                            key={fieldData.name}
                             label={fieldData.label}
                             name={fieldData.name}
-                            type={fieldData.type}/>)}
+                            type={fieldData.type}/>
+                    ))}
 
                     {auctionType === AuctionType.BLIND && <BlindAuctionForm/>}
                     {auctionType === AuctionType.ENGLISH && <EnglishAuctionForm/>}

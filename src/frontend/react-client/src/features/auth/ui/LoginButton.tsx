@@ -1,24 +1,41 @@
-import { useAccount, useConnect } from 'wagmi';
-import { useAuth } from '../model/useAuth';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../app/store';
+import {useAccount, useSignMessage} from 'wagmi';
+import {useAuthorizeMutation} from "../../../shared/api/authApi";
+import {useAppDispatch, useAppSelector} from "../../../app/store";
+import {authActions} from "../model/authSlice";
+
+const message = ("Message to verify login. (OpenGavel)")
 
 export const LoginButton = () => {
-    const { connect, connectors } = useConnect();
-    const { isConnected } = useAccount();
-    const { login } = useAuth();
-    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const { address } = useAccount()
+    const { signMessageAsync } = useSignMessage()
+    const [ authorize ] = useAuthorizeMutation()
+    const { isAuthenticated } = useAppSelector((state) => state.auth)
+    const dispatch = useAppDispatch()
 
-    const handleLogin = async () => {
-        if (!isConnected) {
-            await connect({ connector: connectors[0] });
+    const handleAuth = async () => {
+        if (!address) return
+
+        try {
+
+            console.log("handle")
+            const signature = await signMessageAsync({ message })
+
+            const { token } = await authorize({ address, message, signature }).unwrap()
+
+            console.log('Auth token:', token)
+
+        } catch (error) {
+            console.error('Auth error:', error)
         }
-        await login();
-    };
+    }
+
+    if (isAuthenticated) {
+        return <button onClick={() => dispatch(authActions.clearAuth())}>Logout</button>
+    }
 
     return (
-        <button onClick={handleLogin} disabled={isAuthenticated}>
-            {isAuthenticated ? 'Connected' : 'Connect Wallet & Login'}
-        </button>
-    );
+        <div>
+            {!isAuthenticated && (<button onClick={handleAuth}>Sign In</button>)}
+        </div>
+    )
 };

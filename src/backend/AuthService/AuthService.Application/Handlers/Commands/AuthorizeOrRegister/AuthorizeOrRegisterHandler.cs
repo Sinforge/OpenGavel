@@ -3,12 +3,11 @@ using AuthService.Application.Repositories;
 using AuthService.Application.Services;
 using AuthService.Domain.Entities;
 using AuthService.Domain.ValueObjects;
-using DapperCore.UoW;
 using MediatR;
 
 namespace AuthService.Application.Handlers.Commands.AuthorizeOrRegister;
 
-internal class AuthorizeOrRegisterHandler(IUnitOfWork unitOfWork,
+internal class AuthorizeOrRegisterHandler(
     IUserRepository userRepository,
     IAddressVerifier addressVerifier,
     IJwtTokenService jwtTokenService
@@ -27,8 +26,6 @@ internal class AuthorizeOrRegisterHandler(IUnitOfWork unitOfWork,
         var wallet = Wallet.Create(walletAddress, WalletProvider.MetaMask);
         var newUser = User.Create(wallet);
         await userRepository.AddUserAsync(newUser, cancellationToken);
-        
-        unitOfWork.Commit();
         
         return new(jwtTokenService.GenerateJwtToken(request.Address));
     }

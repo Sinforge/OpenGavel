@@ -13,49 +13,6 @@ export type AuthResponse = {
     token: string
 }
 
-export class BlindAuctionConfiguration implements Deployable {
-
-    constructor(
-        private readonly _owner: EthAddress,
-        private readonly _itemName: string,
-        private readonly _startPrice: string, // BigInt cannot be serialized in JSON, convert in BigInt when deploy contract
-        private readonly _endTimestamp: number,
-        private readonly _maximumBids: number) {
-    }
-
-    public getContractArgs(): any[] {
-        return [
-            this._owner,
-            this._itemName,
-            //BigInt(this._startPrice),
-            this._endTimestamp,
-            this._maximumBids
-        ];
-    }
-}
-
-interface Deployable {
-    getContractArgs() : any[];
-}
-
-export class EnglishAuctionConfiguration implements Deployable {
-    constructor(
-        private readonly _owner: EthAddress,
-        private readonly _itemName: string,
-        private readonly _startPrice: string,
-        private readonly _endTimestamp: number,
-    ) {}
-
-    public getContractArgs(): any[] {
-        return [
-            this._owner,
-            this._itemName,
-            //BigInt(this._startPrice),
-            this._endTimestamp,
-        ]
-    }
-}
-
 export type CreateAuctionRequest = {
     ownerAddress: EthAddress
     title: string
@@ -66,6 +23,24 @@ export type CreateAuctionRequest = {
     configuration: AuctionConfiguration
 }
 
+export type BlindAuctionConfiguration = {
+    _owner: EthAddress
+    _itemName: string
+    _startPrice: string
+    _endTimestamp: number
+    _maximumBids: number
+}
+
+
+export type EnglishAuctionConfiguration = {
+    _owner: EthAddress
+    _itemName: string
+    _startPrice: string
+    _endTimestamp: number
+}
+
+export type AuctionConfiguration = BlindAuctionConfiguration | EnglishAuctionConfiguration
+
 export type GetAuctionResponse = {
     ownerAddress: EthAddress
     contractAddress?: EthAddress
@@ -74,8 +49,8 @@ export type GetAuctionResponse = {
     startTime: Date
     endTime: Date,
     type: AuctionType
-    //status: AuctionStatus
-    configuration: AuctionConfiguration
+    status: AuctionStatus
+    configuration: any
 }
 
 export type GetUserAuctionsRequest = {
@@ -91,11 +66,10 @@ export type GetUserAuctionsAuctionModel = {
     endTime: Date
     type: AuctionType
     status: AuctionStatus
-    configuration: AuctionConfiguration
+    configuration: any
 }
 
 export type GetUserAuctionsResponse = {
     auctions: GetUserAuctionsAuctionModel[]
 }
 
-export type AuctionConfiguration = BlindAuctionConfiguration | EnglishAuctionConfiguration

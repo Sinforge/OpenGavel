@@ -24,8 +24,8 @@ export const auctionApi = baseApi.injectEndpoints({
         getUserAuctions: builder.query<GetUserAuctionsResponse, GetUserAuctionsRequest>({
             query: (params) => ({
                 url: '/queries/auction/my',
-                method: 'GET',
-                params,
+                method: 'POST',
+                data: params,
             }),
         }),
     }),

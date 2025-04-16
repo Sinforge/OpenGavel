@@ -1,7 +1,9 @@
 using LotService.Api.Contracts.Auction.GetAuctionById;
+using LotService.Api.Contracts.Auction.GetAuctions;
 using LotService.Api.Contracts.Auction.GetUserAuctions;
 using LotService.Application.Handlers.Queries.GetAuctionInfo;
 using LotService.Application.Handlers.Queries.GetAuctionOptions;
+using LotService.Application.Handlers.Queries.GetAuctions;
 using LotService.Application.Handlers.Queries.GetUserAuctions;
 using MapsterMapper;
 using MediatR;
@@ -50,5 +52,17 @@ public class AuctionController(IMediator mediator, IMapper mapper) : ControllerB
         var response = await mediator.Send(query, cancellationToken);
         
         return Ok(mapper.Map<GetUserAuctionsResponse>(response));
+    }
+
+    [HttpPost]
+    [ProducesResponseType<GetAuctionsResponse>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAuctionsAsync(
+        [FromBody] GetAuctionsRequest request, CancellationToken cancellationToken)
+    {
+        var query = mapper.Map<GetAuctionsQuery>(request);
+        
+        var response = await mediator.Send(query, cancellationToken);
+        
+        return Ok(mapper.Map<GetAuctionsResponse>(response));
     }
 }

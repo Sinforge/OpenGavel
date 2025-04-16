@@ -1,11 +1,15 @@
 using System.Data;
+using System.Text;
 using Dapper;
 using DapperCore.ConnectionFactory;
+using LotService.Application.Dto;
 using LotService.Application.Repositories;
+using LotService.Application.Repositories.Models;
 using LotService.Domain.Entities;
 using LotService.Domain.Enums;
 using LotService.Domain.ValueObjects;
 using LotService.Infrastructure.Dao;
+using Npgsql;
 
 namespace LotService.Infrastructure.Repositories;
 
@@ -17,10 +21,10 @@ public class AuctionRepository(PostgresConnectionFactory connectionFactory) : IA
                            insert into auctions (
                                                  id, owner_address,
                                                       title, description,
-                                                      configuration, status, type)
+                                                      configuration, status, type, start_time, end_time)
                                                       values (@Id, @OwnerAddress,
                                                                 @Title, @Description, @Configuration,
-                                                              @Status, @Type);
+                                                              @Status, @Type, @StartTime, @EndTime);
                            """;
         var @params = new
         {
@@ -29,6 +33,8 @@ public class AuctionRepository(PostgresConnectionFactory connectionFactory) : IA
             Title = auction.Title,
             Description = auction.Description,
             Configuration = auction.Configuration,
+            StartTime = auction.DateRange.StartTime,
+            EndTime = auction.DateRange.EndTime,
             Status = (int)auction.Status,
             Type = (int)auction.Type
         };
@@ -60,15 +66,25 @@ public class AuctionRepository(PostgresConnectionFactory connectionFactory) : IA
         return result?.ToDomain();
     }
 
-    public async Task UpdateStatusAsync(Guid id, AuctionStatus status, CancellationToken cancellationToken)
+    public async Task OpenAsync(Guid id, DeployedContract deployedContract, CancellationToken cancellationToken)
     {
         const string sql = """
-                           update auctions set status = @Status where id = @Id;
+                           update auctions set 
+                                               status = @Status,
+                                               contract_address = @ContractAddress,
+                                               chain_id = @ChainId
+                                               where id = @Id;
                            """;
 
         var query = new CommandDefinition(
             commandText: sql,
-            parameters: new { Id = id, Status = status },
+            parameters: new
+            {
+                Id = id, 
+                Status = AuctionStatus.Opened, 
+                ContractAddress = deployedContract.Address.Value, 
+                ChainId = (int)deployedContract.ChainId
+            },
             cancellationToken: cancellationToken);
 
         await using var connection = connectionFactory.GetConnection();
@@ -92,5 +108,53 @@ public class AuctionRepository(PostgresConnectionFactory connectionFactory) : IA
         var result = await connection.QueryAsync<AuctionDao>(query);
 
         return result.Select(x => x.ToDomain()).ToList();
+    }
+
+    public async Task<PagedResult<Auction>> GetPagedAuctionsAsync(
+        GetPagedAuctionsQuery query,
+        CancellationToken cancellationToken)
+    {
+        var parameters = new DynamicParameters();
+        var predicateSb = new StringBuilder("where 1=1");
+
+        var statuses = new List<int> { (int)AuctionStatus.Opened };
+        if (query.IncludeClosed)
+            statuses.Add((int)AuctionStatus.Closed);
+        
+        parameters.Add("Statuses", statuses);
+        predicateSb.Append(" and status = any(@Statuses)");
+
+        if (query.Type is not null)
+        {
+            parameters.Add("Type", query.Type);
+            predicateSb.Append(" and type = @Type");
+        }
+
+        if (query.Name is not null)
+        {
+            parameters.Add("Name", $"%{query.Name}%");
+            predicateSb.Append(" and name like @Name");
+        }
+
+        parameters.Add("Limit", query.Limit);
+        parameters.Add("Offset", query.Offset);
+
+        var sql = $"""
+                   select * from auctions {predicateSb} limit @Limit offset @Offset
+                   """;
+
+        await using var connection = connectionFactory.GetConnection();
+        
+        var result = await connection.QueryAsync<AuctionDao>(
+            sql, 
+            parameters,
+            commandType: CommandType.Text);
+
+        var countSql = $"select count(*) from auctions {predicateSb}";
+        var totalCount = await connection.ExecuteScalarAsync<long>(countSql, parameters);
+
+        return new PagedResult<Auction>(
+            result.Select(x => x.ToDomain()).ToList(),
+            totalCount);
     }
 }

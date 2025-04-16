@@ -1,7 +1,5 @@
-using Dapper.FluentMap;
 using DapperCore;
 using LotService.Application.Repositories;
-using LotService.Infrastructure.Mapping;
 using LotService.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,10 +9,7 @@ public static class RegisterDependencies
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
     {
-        FluentMapper.Initialize(config =>
-        {
-            config.AddMap(new AuctionMap());
-        });
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         return services.AddDapperCore(connectionString)
             .AddScoped<IAuctionRepository, AuctionRepository>();
     }

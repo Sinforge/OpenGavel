@@ -1,0 +1,1 @@
+namespace LotService.Application.Dto;

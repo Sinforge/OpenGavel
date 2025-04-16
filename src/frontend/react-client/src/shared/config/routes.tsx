@@ -15,10 +15,6 @@ export const generalRoutes: RouteObject[] = [
         element: <UserAuctionsPage/>
     },
     {
-        path: "/connect",
-        element: <ConnectWalletPage/>
-    },
-    {
         path: "/auth",
         element: <AuthPage/>
     }

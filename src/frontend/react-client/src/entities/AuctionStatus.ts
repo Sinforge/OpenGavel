@@ -1,5 +1,5 @@
 export enum AuctionStatus {
-    PENDING,
-    DEPLOYED,
+    CONFIGURED,
+    OPENED,
     CLOSED
 }

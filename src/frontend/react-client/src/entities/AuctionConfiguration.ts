@@ -34,14 +34,18 @@ export class EnglishAuctionConfiguration implements Deployable {
     private readonly _owner: EthAddress
     private readonly _itemName: string
     private readonly _startPrice: BigInt
+    private readonly _startTimestamp: number
     private readonly _endTimestamp: number
+    private readonly _bidStep: BigInt
     constructor(
         config: any
     ) {
         this._owner = config["_owner"];
         this._itemName = config["_itemName"];
         this._startPrice = BigInt(config["_startPrice"]);
+        this._startTimestamp = config["_startTimestamp"];
         this._endTimestamp = config["_endTimestamp"];
+        this._bidStep = BigInt(config["_bidStep"]);
 }
 
     public getContractArgs(): any[] {
@@ -49,7 +53,9 @@ export class EnglishAuctionConfiguration implements Deployable {
             this._owner,
             this._itemName,
             this._startPrice,
+            this._startTimestamp,
             this._endTimestamp,
+            this._bidStep
         ]
     }
 }

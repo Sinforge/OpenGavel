@@ -4,7 +4,10 @@ namespace LotService.Application.Handlers.Queries.GetAuctionInfo.Models;
 
 public record AuctionInfo(
     string OwnerAddress,
-    string? ContractAddress,
+    string ContractAddress,
+    ChainId ChainId,
+    DateTime StartTime,
+    DateTime EndTime,
     string Title,
     string Description,
     object Configuration,

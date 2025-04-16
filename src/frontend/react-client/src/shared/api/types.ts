@@ -73,3 +73,9 @@ export type GetUserAuctionsResponse = {
     auctions: GetUserAuctionsAuctionModel[]
 }
 
+export type OpenAuctionRequest = {
+    id: string
+    chainId: number
+    contractAddress: EthAddress
+}
+

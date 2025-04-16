@@ -18,8 +18,9 @@ internal class AddAuctionHandler(
             request.Title,
             request.Description,
             request.Configuration,
-            AuctionStatus.Created,
-            request.Type
+            AuctionStatus.Configured,
+            request.Type,
+            DateTimeRange.Create(request.StartTime, request.EndTime)
         );
 
         await auctionRepository.AddAsync(auction, cancellationToken);

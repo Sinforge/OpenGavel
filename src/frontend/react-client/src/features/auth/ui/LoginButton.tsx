@@ -9,7 +9,7 @@ export const LoginButton = () => {
     const { address } = useAccount()
     const { signMessageAsync } = useSignMessage()
     const [ authorize ] = useAuthorizeMutation()
-    const { isAuthenticated } = useAppSelector((state) => state.auth)
+    const { isAuthenticated, jwt } = useAppSelector((state) => state.auth)
     const dispatch = useAppDispatch()
 
     const handleAuth = async () => {
@@ -23,6 +23,8 @@ export const LoginButton = () => {
             const { token } = await authorize({ address, message, signature }).unwrap()
 
             console.log('Auth token:', token)
+
+            dispatch(authActions.setAuth( { jwt: token, walletAddress: address }));
 
         } catch (error) {
             console.error('Auth error:', error)

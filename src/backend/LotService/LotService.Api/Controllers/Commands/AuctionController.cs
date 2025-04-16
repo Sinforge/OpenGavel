@@ -1,6 +1,8 @@
 using LotService.Api.Contracts.Auction.AddAuction;
+using LotService.Api.Contracts.Auction.OpenAuction;
 using LotService.Api.Contracts.Base;
 using LotService.Application.Handlers.Commands.Auction.AddAuction;
+using LotService.Application.Handlers.Commands.Auction.OpenAuction;
 using MapsterMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +15,24 @@ public class AuctionController(IMediator mediator, IMapper mapper) : ControllerB
 {
     [HttpPost("create")]
     [ProducesResponseType<IdModel<Guid>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetBlindAuctionAsync(
+    public async Task<IActionResult> CreateAuctionAsync(
         [FromBody] AddAuctionRequest request, CancellationToken cancellationToken)
     {
-        var query = mapper.Map<AddAuctionCommand>(request);
-        var response = await mediator.Send(query, cancellationToken);
+        var command = mapper.Map<AddAuctionCommand>(request);
+        var response = await mediator.Send(command, cancellationToken);
         
         return Ok(response);
+    }
+
+    [HttpPost("deploy")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> OpenAuctionAsync(
+        [FromBody] OpenAuctionRequest request, CancellationToken cancellationToken)
+    {
+        var command = mapper.Map<OpenAuctionCommand>(request);
+        
+        await mediator.Send(command, cancellationToken);
+        
+        return Ok();
     }
 }

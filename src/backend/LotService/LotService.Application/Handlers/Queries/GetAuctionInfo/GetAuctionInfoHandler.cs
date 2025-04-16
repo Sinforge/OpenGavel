@@ -16,7 +16,10 @@ internal class GetAuctionInfoHandler(
         
         return new AuctionInfo(
             auction.OwnerAddress.Value,
-            auction.ContractAddress?.Value,
+            auction.DeployedContract!.Address.Value,
+            auction.DeployedContract!.ChainId,
+            auction.DateRange.StartTime,
+            auction.DateRange.EndTime,
             auction.Title,
             auction.Description,
             auction.Configuration,

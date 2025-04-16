@@ -22,14 +22,20 @@ import {AuctionFormData} from "../model/AuctionFormData";
 import {useCreateAuctionMutation } from "../../../shared/api/auctionApi";
 import {EnglishAuctionForm} from "./EnglishAuctionForm";
 import {useAccount} from "wagmi";
+import {DateTimePickerController} from "../../../features/create-auction/ui/DateTimePickerController";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
 
 const fields = [
     {name: "title", label: "Lot name", type: "text"},
     {name: "description", label: "Description", type: "text"},
-    {name: "startTime", label: "Start time", type: "date"},
-    {name: "endTime", label: "End time", type: "date"},
     {name: "startPrice", label: "Start price", type: "text"}
 ];
+
+const dateTimeFields = [
+    {name: "startTime", label: "Start time"},
+    {name: "endTime", label: "End time"}
+]
 
 export const CreateAuctionPage = () => {
     const methods = useForm<AuctionFormData>({
@@ -65,7 +71,7 @@ export const CreateAuctionPage = () => {
                     _owner: account.address,
                     _itemName: data.title,
                     _startPrice: parseEther(data.startPrice.toString()).toString(),
-                    _endTimestamp: +new Date(data.endTime),
+                    _endTimestamp: +new Date(+data.endTime / 1000),
                     _maximumBids: Number(data.bidAmount),
                 } as BlindAuctionConfiguration;
                 break;
@@ -75,7 +81,9 @@ export const CreateAuctionPage = () => {
                     _owner: account.address,
                     _itemName: data.title,
                     _startPrice: parseEther(data.startPrice.toString()).toString(),
-                    _endTimestamp: +new Date(data.endTime),
+                    _startTimestamp: +new Date(+data.startTime / 1000),
+                    _endTimestamp: +new Date(+data.endTime / 1000),
+                    _bidStep: parseEther(data.bidStep!.toString()).toString(),
                 } as EnglishAuctionConfiguration;
                 break;
 
@@ -107,6 +115,7 @@ export const CreateAuctionPage = () => {
                 Create Auction
             </Typography>
 
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
             <FormProvider {...methods}>
                 <Paper sx={{p: 3}} component="form" onSubmit={handleSubmit(onSubmit)}>
                     <AuctionTypeToggleFieldController/>
@@ -119,6 +128,13 @@ export const CreateAuctionPage = () => {
                             type={fieldData.type}/>
                     ))}
 
+                    {dateTimeFields.map((dateTime) => (
+                        <DateTimePickerController
+                            key={dateTime.name}
+                            label={dateTime.label}
+                            name={dateTime.name}/>
+                    ))}
+
                     {auctionType === AuctionType.BLIND && <BlindAuctionForm/>}
                     {auctionType === AuctionType.ENGLISH && <EnglishAuctionForm/>}
 
@@ -129,6 +145,7 @@ export const CreateAuctionPage = () => {
                     </Box>
                 </Paper>
             </FormProvider>
+            </LocalizationProvider>
         </Box>
     );
 };

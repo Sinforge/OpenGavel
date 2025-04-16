@@ -1,22 +1,29 @@
 import {Box, Button, Chip, CircularProgress, List, ListItem, Paper, Typography} from "@mui/material";
-import {Link} from "react-router-dom";
-import { GetUserAuctionsAuctionModel } from "../../../shared/api/types";
-import {useGetUserAuctionsQuery} from "../../../shared/api/auctionApi";
+import {Link, useNavigate} from "react-router-dom";
+import {GetUserAuctionsAuctionModel, OpenAuctionRequest} from "../../../shared/api/types";
+import {useGetUserAuctionsQuery, useOpenAuctionMutation} from "../../../shared/api/auctionApi";
 import {AuctionType} from "../../../entities/AuctionType";
 import {AuctionStatus} from "../../../entities/AuctionStatus";
 import {useWalletClient} from "wagmi";
 import {BlindAuctionConfiguration, EnglishAuctionConfiguration} from "../../../entities/AuctionConfiguration";
-import {deployContract} from "viem/actions";
+import {deployContract, waitForTransactionReceipt} from "viem/actions";
 
 type ContractInfo = {
     bytecode: string
     abi: any
 }
 
+const AuctionItemTokenAddress = "0x8cC1fF721928ddE2903ca7eb0bbc113daD29DDbD"
+
 export const UserAuctionsPage = () => {
     const { data: walletClient } = useWalletClient();
     const account = walletClient?.account;
-    const { data } = useGetUserAuctionsQuery({address: account?.address });
+    const navigate = useNavigate();
+    const { data } = useGetUserAuctionsQuery(
+        { address: account?.address },
+        { skip: !account?.address });
+
+    const [openAuction] = useOpenAuctionMutation();
 
     if(data === undefined)
         return <CircularProgress></CircularProgress>
@@ -37,41 +44,42 @@ export const UserAuctionsPage = () => {
     }
 
     const handleDeploy = async (auction: GetUserAuctionsAuctionModel) => {
-            const contractInfo = await getContractInfo(auction.type);
-            const config = auction.type === AuctionType.ENGLISH
-                ? new EnglishAuctionConfiguration(auction.configuration)
-                : new BlindAuctionConfiguration(auction.configuration);
+        const contractInfo = await getContractInfo(auction.type);
+        const config = auction.type === AuctionType.ENGLISH
+            ? new EnglishAuctionConfiguration(auction.configuration)
+            : new BlindAuctionConfiguration(auction.configuration);
+        const constructorParams = config.getContractArgs();
+        console.log(`0x${contractInfo.bytecode}`);
+        console.log(contractInfo);
+        const txHash = await deployContract(walletClient!, {
+            abi: contractInfo.abi,
+            bytecode: `0x${contractInfo.bytecode}`,
+            args: constructorParams,
+            account: account!.address
+        });
 
-            const constructorParams = config.getContractArgs();
+        const receipt = await waitForTransactionReceipt(walletClient!, {  hash: txHash });
+        const contractAddress = receipt.contractAddress;
 
-            console.log(`0x${contractInfo.bytecode}`);
-            console.log(contractInfo);
-            const txHash = await deployContract(walletClient!, {
-                abi: contractInfo.abi,
-                bytecode: `0x${contractInfo.bytecode}`,
-                args: constructorParams,
-                account: account!.address
-            });
+        const openAuctionRequest: OpenAuctionRequest = {
+            id: auction.id,
+            contractAddress: contractAddress!,
+            chainId: walletClient!.chain.id
+        }
 
-            console.log(txHash);
+        await openAuction(openAuctionRequest);
+
+        navigate("/auctions/" + auction.id);
     };
 
     const getStatusColor = (status: AuctionStatus) => {
         switch (status) {
-            case AuctionStatus.PENDING: return 'warning';
-            case AuctionStatus.DEPLOYED: return 'success';
+            case AuctionStatus.CONFIGURED: return 'warning';
+            case AuctionStatus.OPENED: return 'success';
             case AuctionStatus.CLOSED: return 'error';
             default: return 'default';
         }
     };
-
-    /*if (!userAddress) {
-        return (
-            <Box sx={{ p: 3, textAlign: 'center' }}>
-                <Typography color="error">Please connect your wallet</Typography>
-            </Box>
-        );
-    }*/
 
     return (
         <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
@@ -79,10 +87,9 @@ export const UserAuctionsPage = () => {
                 My Auctions
             </Typography>
 
-            <Button component={Link} to="/" variant="contained" sx={{ mb: 3 }}>
+            <Button component={Link} to="/auctions/create" variant="contained" sx={{ mb: 3 }}>
                 Create New Auction
             </Button>
-
 
            <Paper elevation={3}>
                 <List>

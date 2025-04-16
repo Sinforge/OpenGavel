@@ -19,7 +19,7 @@ contract BaseAuction {
         uint256 amount;
     }
 
-    event NewHighestBid(address indexed bidder, uint256 amount);
+    event NewBid(address indexed bidder, uint256 amount);
     event AuctionFinalized(address indexed winner, uint256 amount);
 
     modifier auctionNotEnded() virtual {

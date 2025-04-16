@@ -1,5 +1,5 @@
 import { createConfig, WagmiProvider } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
+import {bsc, mainnet, sepolia, zksync} from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http } from 'viem';
 
@@ -29,11 +29,14 @@ const customTestnet = {
 };
 
 const config = createConfig({
-    chains: [mainnet, customTestnet],
+    chains: [mainnet, customTestnet, sepolia, zksync, bsc],
     transports: {
         [mainnet.id]: http(),
         [customTestnet.id]: http(),
-    },
+        [sepolia.id]: http(),
+        [zksync.id]: http(),
+        [bsc.id]: http()
+    }
 });
 const queryClient = new QueryClient();
 

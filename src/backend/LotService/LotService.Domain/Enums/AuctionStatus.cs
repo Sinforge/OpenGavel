@@ -2,8 +2,7 @@ namespace LotService.Domain.Enums;
 
 public enum AuctionStatus
 {
-    Created,
-    Pending,
-    Deployed,
+    Configured,
+    Opened,
     Closed
 }

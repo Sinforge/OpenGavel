@@ -1,12 +1,12 @@
-import { baseApi } from './baseApi';
+import { baseLotApi } from './baseLotApi';
 import {
     CreateAuctionRequest,
     GetAuctionResponse,
     GetUserAuctionsRequest,
-    GetUserAuctionsResponse,
+    GetUserAuctionsResponse, OpenAuctionRequest,
 } from './types';
 
-export const auctionApi = baseApi.injectEndpoints({
+export const auctionApi = baseLotApi.injectEndpoints({
     endpoints: (builder) => ({
         getAuction: builder.query<GetAuctionResponse, string>({
             query: (auctionId) => ({
@@ -28,6 +28,13 @@ export const auctionApi = baseApi.injectEndpoints({
                 data: params,
             }),
         }),
+        openAuction: builder.mutation<void, OpenAuctionRequest>({
+            query: (body) => ({
+                url: '/commands/auction/deploy',
+                method: 'POST',
+                data: body
+            })
+        })
     }),
 });
 
@@ -35,4 +42,5 @@ export const {
     useGetAuctionQuery,
     useCreateAuctionMutation,
     useGetUserAuctionsQuery,
+    useOpenAuctionMutation,
 } = auctionApi;

@@ -17,7 +17,8 @@ internal class GetUserAuctionsHandler(
         var response = auctions
             .Select(x => new GetUserAuctionsAuctionDto(
                 x.Id,
-                x.ContractAddress?.Value,
+                x.DeployedContract?.Address.Value,
+                x.DeployedContract?.ChainId,
                 x.Title,
                 x.Status,
                 x.Type,

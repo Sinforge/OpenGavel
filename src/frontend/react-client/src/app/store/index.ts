@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { persistStore } from 'redux-persist';
 import { rootReducer } from './rootReducer';
-import { baseApi } from "../../shared/api/baseApi";
+import { baseLotApi } from "../../shared/api/baseLotApi";
 import { auctionApi } from "../../shared/api/auctionApi";
 import {authApi} from "../../shared/api/authApi";
 import {
@@ -14,7 +14,7 @@ export const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware()
-            .concat(baseApi.middleware)
+            .concat(baseLotApi.middleware)
             .concat(auctionApi.middleware)
             .concat(authApi.middleware)
 });

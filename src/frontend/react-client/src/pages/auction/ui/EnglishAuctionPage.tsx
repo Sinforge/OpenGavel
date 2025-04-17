@@ -254,8 +254,7 @@ export const EnglishAuctionPage: React.FC<Props> = ({ data }) => {
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2, mt: 2, alignItems: 'center' }}>
-            {auctionStatus === 'active' && (
-                <>
+             <>
                   <TextField
                       label="Bid Amount (ETH)"
                       type="number"
@@ -277,8 +276,6 @@ export const EnglishAuctionPage: React.FC<Props> = ({ data }) => {
                     {isBidding ? <CircularProgress size={24} /> : 'Place Bid'}
                   </Button>
                 </>
-            )}
-
             <Button
                 variant="contained"
                 color="secondary"
@@ -286,9 +283,7 @@ export const EnglishAuctionPage: React.FC<Props> = ({ data }) => {
                   address: data.contractAddress!,
                   abi: contractData?.abi || [],
                   functionName: 'finalize',
-                })}
-                disabled={auctionStatus !== 'ended' || !contractData}
-            >
+                })}>
               Finalize Auction
             </Button>
 
@@ -312,19 +307,17 @@ export const EnglishAuctionPage: React.FC<Props> = ({ data }) => {
               title={`Bid History (${bids.length} bids)`}
               height={400}
               onPointClick={(bid) => {
-                // Обработка клика по точке графика
                 console.log('Selected bid:', bid);
               }}
           />
         </Paper>
 
         <Paper sx={{ p: 3 }}>
-          <EventLogList
+          {/*<EventLogList
               contractAddress={data.contractAddress!}
-              abi={contractData?.abi!}
+              abi={contractData!.abi}
               title="Auction Events"
-              maxItems={100}
-          />
+          />*/}
         </Paper>
       </Box>
   );

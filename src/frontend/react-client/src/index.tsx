@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './app';
+import {CssBaseline} from "@mui/material";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -9,6 +10,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
+        <CssBaseline />
         <App />
     </React.StrictMode>
 );

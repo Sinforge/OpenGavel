@@ -4,18 +4,19 @@ import { formatUnits } from 'viem';
 import { ApexOptions } from 'apexcharts';
 import { EthAddress } from "../../../shared/api/types";
 
-export interface BidPoint {
+interface Bid {
     amount: bigint;
     bidder: EthAddress;
     blockNumber: bigint;
-    timestamp?: number;
+    timestamp: Date;
 }
 
+
 interface EnglishAuctionBidChartProps {
-    bids: BidPoint[];
+    bids: Bid[];
     title?: string;
     height?: number;
-    onPointClick?: (bid: BidPoint) => void;
+    onPointClick?: (bid: Bid) => void;
 }
 
 const EnglishAuctionBidChart: React.FC<EnglishAuctionBidChartProps> = ({
@@ -87,7 +88,7 @@ const EnglishAuctionBidChart: React.FC<EnglishAuctionBidChartProps> = ({
             </div>
             ${bid.timestamp ? `
             <div style="margin-top: 4px;">
-              Date: ${new Date(bid.timestamp * 1000).toLocaleString()}
+              Date: ${bid.timestamp}
             </div>` : ''}
           </div>
         `;

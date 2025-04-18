@@ -8,7 +8,7 @@ public sealed record GetAuctionsRequest(
     [property: JsonPropertyName("limit")] long Limit,
     [property: JsonPropertyName("type")] AuctionType? Type,
     [property: JsonPropertyName("name")] string? Name,
+    [property: JsonPropertyName("chainId")] int? ChainId,
     [property: JsonPropertyName("startDate")] DateTime? StartDate,
     [property: JsonPropertyName("endDate")] DateTime? EndDate,
-    [property: JsonPropertyName("startTime")] DateTime? StartTime,
     [property: JsonPropertyName("includeClosed")] bool IncludeClosed);

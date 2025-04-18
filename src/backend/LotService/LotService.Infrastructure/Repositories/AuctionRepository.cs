@@ -130,10 +130,28 @@ public class AuctionRepository(PostgresConnectionFactory connectionFactory) : IA
             predicateSb.Append(" and type = @Type");
         }
 
+        if (query.ChainId is not null)
+        {
+            parameters.Add("ChainId", query.ChainId);
+            predicateSb.Append(" and chain_id = @ChainId");
+        }
+
         if (query.Name is not null)
         {
             parameters.Add("Name", $"%{query.Name}%");
-            predicateSb.Append(" and name like @Name");
+            predicateSb.Append(" and title like @Name");
+        }
+
+        if (query.StartDateTime is not null)
+        {
+            parameters.Add("StartDate", query.StartDateTime);
+            predicateSb.Append(" and @StartDate >= start_time");
+        }
+        
+        if (query.EndDateTime is not null)
+        {
+            parameters.Add("EndDate", query.EndDateTime);
+            predicateSb.Append(" and @EndDate >= end_time");
         }
 
         parameters.Add("Limit", query.Limit);

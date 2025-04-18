@@ -1,5 +1,5 @@
 export enum AuctionStatus {
-    CONFIGURED,
-    OPENED,
-    CLOSED
+    CONFIGURED= 'CONFIGURED',
+    OPENED= "OPENED",
+    CLOSED = "CLOSED"
 }

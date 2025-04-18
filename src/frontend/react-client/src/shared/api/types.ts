@@ -44,6 +44,7 @@ export type AuctionConfiguration = BlindAuctionConfiguration | EnglishAuctionCon
 export type GetAuctionResponse = {
     ownerAddress: EthAddress
     contractAddress?: EthAddress
+    chainId: number,
     title: string
     description: string
     startTime: Date
@@ -64,6 +65,7 @@ export type GetUserAuctionsAuctionModel = {
     description: string
     startTime: Date
     endTime: Date
+    chainId: number | null
     type: AuctionType
     status: AuctionStatus
     configuration: any
@@ -79,3 +81,29 @@ export type OpenAuctionRequest = {
     contractAddress: EthAddress
 }
 
+export type GetAuctionsRequest = {
+    offset: number,
+    limit: number,
+    type: AuctionType | null,
+    name: string | null,
+    chainId: number | null,
+    startDate: Date | null,
+    endDate: Date | null,
+    includeClosed: boolean
+}
+
+export type GetAuctionsResponse = {
+    items: AuctionType[],
+    totalCount: number
+}
+
+export type GetAuctionsModel = {
+    id: string,
+    contractAddress: EthAddress,
+    ownerAddress: EthAddress,
+    title: string,
+    chainId: number,
+    description: string,
+    isClosed: boolean,
+    type: AuctionType
+}

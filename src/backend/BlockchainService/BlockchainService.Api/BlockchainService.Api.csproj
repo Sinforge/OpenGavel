@@ -35,5 +35,9 @@
       <ProjectReference Include="..\BlockchainService.Infrastructure\BlockchainService.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Mappers\" />
+    </ItemGroup>
+
 
 </Project>

@@ -1,27 +1,21 @@
-using BlockchainService.Application.Handlers.Queries.Contracts.GetContract;
-using BlockchainService.Constants;
-using MediatR;
+using BlockchainService.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlockchainService.Controllers.Queries;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class ContractController(IMediator mediator) : ControllerBase
+public class ContractController(HttpClient client) : ControllerBase
 {
-    [HttpGet("blind")]
-    public async Task<IActionResult> UploadBlindAuctionContractAsync(CancellationToken cancellationToken)
+    [HttpPost("getLogs")]
+    public async Task<IActionResult> GetLogsAsync(
+        [FromBody] GetAuctionLogsRequest request,
+        CancellationToken cancellationToken)
     {
-        var query = new GetContractQuery(AuctionConstants.BlindAuctionName);
-        var response = await mediator.Send(query, cancellationToken);
-        return Ok(response);
+        var url = $"https://api.etherscan.io/v2/api?chainid={request.ChainId}&module=logs&action=getLogs&address={request.Address}&apikey=MWKSJGICRZI92H5UTZFU2V35WXHX87WSPW";
+        Console.WriteLine(url);
+        var logs = await client.GetAsync(url, cancellationToken);
+        return Ok(await logs.Content.ReadFromJsonAsync<GetAuctionLogsResponse>(cancellationToken));
     }
     
-    [HttpGet("english")]
-    public async Task<IActionResult> GetEnglishAuctionContractAsync(CancellationToken cancellationToken)
-    {
-        var query = new GetContractQuery(AuctionConstants.EnglishAuctionName);
-        var response = await mediator.Send(query, cancellationToken);
-        return Ok(response);
-    }
 }

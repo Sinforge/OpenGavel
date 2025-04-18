@@ -17,6 +17,7 @@ internal class GetAuctionsHandler(
             request.Limit,
             request.Type,
             request.Name,
+            request.ChainId,
             request.StartDate,
             request.EndDate,
             request.IncludeClosed

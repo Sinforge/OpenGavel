@@ -16,4 +16,9 @@
       <ProjectReference Include="..\BlockchainService.Domain\BlockchainService.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Handlers\Commands\Contracts\" />
+      <Folder Include="Handlers\Queries\Contracts\" />
+    </ItemGroup>
+
 </Project>

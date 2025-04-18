@@ -9,8 +9,8 @@ public sealed record GetAuctionsQuery(
     long Limit,
     AuctionType? Type,
     string? Name, 
+    int? ChainId,
     DateTime? StartDate,
     DateTime? EndDate,
-    DateTime? StartTime,
     bool IncludeClosed
     ) : IRequest<PagedResult<GetAuctionsDto>>;

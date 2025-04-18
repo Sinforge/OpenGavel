@@ -8,6 +8,7 @@ public sealed record GetAuctionsModel(
     [property: JsonPropertyName("contractAddress")] string ContractAddress,
     [property: JsonPropertyName("ownerAddress")] string OwnerAddress,
     [property: JsonPropertyName("title")] string Title,
+    [property: JsonPropertyName("chainId")] int ChainId,
     [property: JsonPropertyName("description")] string Description,
     [property: JsonPropertyName("isClosed")] bool IsClosed,
     [property: JsonPropertyName("type")] AuctionType Type);

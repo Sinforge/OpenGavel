@@ -9,5 +9,6 @@ public sealed record GetUserAuctionsAuctionDto(
     [property: JsonPropertyName("title")] string Title,
     [property: JsonPropertyName("status")] AuctionStatus Status,
     [property: JsonPropertyName("type")] AuctionType Type,
+    [property: JsonPropertyName("chainId")] int? ChainId,
     [property: JsonPropertyName("configuration")] object Configuration
 );

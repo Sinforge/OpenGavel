@@ -6,7 +6,8 @@ public sealed record GetPagedAuctionsQuery(
     long Offset,
     long Limit,
     AuctionType? Type,
-    string? Name, 
+    string? Name,
+    int? ChainId,
     DateTime? StartDateTime,
     DateTime? EndDateTime,
     bool IncludeClosed);

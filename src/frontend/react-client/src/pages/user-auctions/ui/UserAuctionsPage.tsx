@@ -1,75 +1,114 @@
-import {Box, Button, Chip, CircularProgress, List, ListItem, Paper, Typography} from "@mui/material";
-import {Link, useNavigate} from "react-router-dom";
-import {GetUserAuctionsAuctionModel, OpenAuctionRequest} from "../../../shared/api/types";
-import {useGetUserAuctionsQuery, useOpenAuctionMutation} from "../../../shared/api/auctionApi";
-import {AuctionType} from "../../../entities/AuctionType";
-import {AuctionStatus} from "../../../entities/AuctionStatus";
-import {useWalletClient} from "wagmi";
-import {BlindAuctionConfiguration, EnglishAuctionConfiguration} from "../../../entities/AuctionConfiguration";
-import {deployContract, waitForTransactionReceipt} from "viem/actions";
+import React, { useState } from 'react';
+import {
+    Box,
+    Button,
+    Chip,
+    CircularProgress,
+    Typography,
+    Card,
+    ListItemButton,
+    useTheme,
+    Modal,
+    Avatar,
+    CardContent,
+    CardActions
+} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+    GetUserAuctionsAuctionModel,
+    OpenAuctionRequest
+} from '../../../shared/api/types';
+import {
+    useGetUserAuctionsQuery,
+    useOpenAuctionMutation
+} from '../../../shared/api/auctionApi';
+import { AuctionType } from '../../../entities/AuctionType';
+import { AuctionStatus } from '../../../entities/AuctionStatus';
+import { useWalletClient } from 'wagmi';
+import {
+    BlindAuctionConfiguration,
+    EnglishAuctionConfiguration
+} from '../../../entities/AuctionConfiguration';
+import { deployContract, waitForTransactionReceipt } from 'viem/actions';
+import { CHAIN_ICONS, CHAIN_NAMES } from '../../../shared/constants/ChainConstants';
+
+const avatarStyle = {
+    width: 24,
+    height: 24,
+    '& img': {
+        objectFit: 'contain',
+    },
+};
 
 type ContractInfo = {
-    bytecode: string
-    abi: any
-}
+    bytecode: string;
+    abi: any;
+};
 
-const AuctionItemTokenAddress = "0x8cC1fF721928ddE2903ca7eb0bbc113daD29DDbD"
-
-export const UserAuctionsPage = () => {
+export const UserAuctionsPage: React.FC = () => {
+    const theme = useTheme();
     const { data: walletClient } = useWalletClient();
     const account = walletClient?.account;
     const navigate = useNavigate();
-    const { data } = useGetUserAuctionsQuery(
+    const { data, isLoading } = useGetUserAuctionsQuery(
         { address: account?.address },
-        { skip: !account?.address });
+        { skip: !account?.address }
+    );
 
     const [openAuction] = useOpenAuctionMutation();
+    const [isProcessing, setIsProcessing] = useState(false);
 
-    if(data === undefined)
-        return <CircularProgress></CircularProgress>
-
-
-    const getContractInfo = async (type: AuctionType) : Promise<ContractInfo> => {
-        let path: string;
-        switch (type) {
-            case AuctionType.BLIND:
-                path = "/contracts/auction.blind.json";
-                break;
-            case AuctionType.ENGLISH:
-                path = "/contracts/auction.english.json"
-                break;
-        }
-
-        return (await fetch(path)).json();
+    if (isLoading || !data) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
+    const getContractInfo = async (
+        type: AuctionType
+    ): Promise<ContractInfo> => {
+        const path = type === AuctionType.BLIND
+            ? '/contracts/auction.blind.json'
+            : '/contracts/auction.english.json';
+        return (await fetch(path)).json();
+    };
+
     const handleDeploy = async (auction: GetUserAuctionsAuctionModel) => {
-        const contractInfo = await getContractInfo(auction.type);
-        const config = auction.type === AuctionType.ENGLISH
-            ? new EnglishAuctionConfiguration(auction.configuration)
-            : new BlindAuctionConfiguration(auction.configuration);
-        const constructorParams = config.getContractArgs();
-        console.log(`0x${contractInfo.bytecode}`);
-        console.log(contractInfo);
-        const txHash = await deployContract(walletClient!, {
-            abi: contractInfo.abi,
-            bytecode: `0x${contractInfo.bytecode}`,
-            args: constructorParams,
-            account: account!.address
-        });
+        setIsProcessing(true);
+        try {
+            const contractInfo = await getContractInfo(auction.type);
+            const config = auction.type === AuctionType.ENGLISH
+                ? new EnglishAuctionConfiguration(auction.configuration)
+                : new BlindAuctionConfiguration(auction.configuration);
+            const constructorParams = config.getContractArgs();
 
-        const receipt = await waitForTransactionReceipt(walletClient!, {  hash: txHash });
-        const contractAddress = receipt.contractAddress;
+            const txHash = await deployContract(walletClient!, {
+                abi: contractInfo.abi,
+                bytecode: `0x${contractInfo.bytecode}`,
+                args: constructorParams,
+                account: account!.address
+            });
 
-        const openAuctionRequest: OpenAuctionRequest = {
-            id: auction.id,
-            contractAddress: contractAddress!,
-            chainId: walletClient!.chain.id
+            const receipt = await waitForTransactionReceipt(walletClient!, {
+                hash: txHash
+            });
+            const contractAddress = receipt.contractAddress;
+
+            const openAuctionRequest: OpenAuctionRequest = {
+                id: auction.id,
+                contractAddress: contractAddress!,
+                chainId: walletClient!.chain.id
+            };
+
+            await openAuction(openAuctionRequest);
+            navigate(`/auctions/${auction.id}`);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsProcessing(false);
         }
-
-        await openAuction(openAuctionRequest);
-
-        navigate("/auctions/" + auction.id);
     };
 
     const getStatusColor = (status: AuctionStatus) => {
@@ -82,58 +121,156 @@ export const UserAuctionsPage = () => {
     };
 
     return (
-        <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
-            <Typography variant="h4" gutterBottom>
+        <Box sx={{
+            maxWidth: 1000,
+            mx: 'auto',
+            p: 3,
+            bgcolor: 'background.default',
+            minHeight: '100vh'
+        }}>
+            <Typography variant="h4" gutterBottom color="textPrimary">
                 My Auctions
             </Typography>
 
-            <Button component={Link} to="/auctions/create" variant="contained" sx={{ mb: 3 }}>
+            <Button
+                component={Link}
+                to="/auctions/create"
+                variant="contained"
+                sx={{ mb: 4 }}
+            >
                 Create New Auction
             </Button>
 
-           <Paper elevation={3}>
-                <List>
-                    {data!.auctions.map((auction) => (
-                        <ListItem
+            <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+                gap: 3
+            }}>
+                {data.auctions.map((auction) => {
+                    const isOpened = auction.status === AuctionStatus.OPENED;
+                    return (
+                        <Card
                             key={auction.id}
+                            elevation={4}
                             sx={{
-                                borderBottom: '1px solid #eee',
+                                height: '100%',
                                 display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
+                                flexDirection: 'column',
+                                bgcolor: 'background.paper',
+                                '&:hover': {
+                                    transform: 'translateY(-4px)',
+                                    transition: 'transform 0.2s'
+                                }
                             }}
                         >
-                            <Box sx={{ flexGrow: 1 }}>
-                                <Typography variant="h6">{auction.title}</Typography>
-                                <Box sx={{ mt: 1, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                                    <Chip
-                                        label={auction.type}
-                                        variant="outlined"
-                                        color="primary"
-                                    />
-                                    <Chip
-                                        label={auction.status}
-                                        color={getStatusColor(auction.status)}
-                                    />
+                            <ListItemButton
+                                onClick={isOpened ? () => navigate(`/auctions/${auction.id}`) : undefined}
+                                sx={{
+                                    flexGrow: 1,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'flex-start',
+                                    height: '100%',
+                                    textAlign: 'left',
+                                    transition: theme.transitions.create(['transform'], {
+                                        duration: theme.transitions.duration.short
+                                    }),
+                                    p: 0,
+                                    '&:hover': {
+                                        backgroundColor: 'action.hover'
+                                    }
+                                }}
+                            >
+                                <CardContent sx={{ width: '100%' }}>
+                                    <Typography variant="h6" gutterBottom color="textPrimary">
+                                        {auction.title}
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 1 }}>
+                                        <Chip
+                                            label={auction.type}
+                                            variant="outlined"
+                                            color="primary"
+                                        />
+                                        <Chip
+                                            label={auction.status}
+                                            color={getStatusColor(auction.status)}
+                                        />
+                                        {auction.chainId && (
+                                            <Chip
+                                                variant="outlined"
+                                                label={CHAIN_NAMES[auction.chainId] || `Chain ${auction.chainId}`}
+                                                avatar={
+                                                    <Avatar
+                                                        src={CHAIN_ICONS[auction.chainId]}
+                                                        sx={avatarStyle}
+                                                    />
+                                                }
+                                                sx={{
+                                                    color: 'text.secondary',
+                                                    borderColor: 'divider'
+                                                }}
+                                            />
+                                        )}
+                                    </Box>
                                     {auction.contractAddress && (
-                                        <Typography variant="body2">
+                                        <Typography
+                                            variant="body2"
+                                            color="textSecondary"
+                                            sx={{ mt: 1 }}
+                                        >
                                             Contract: {auction.contractAddress}
                                         </Typography>
                                     )}
-                                </Box>
-                            </Box>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => handleDeploy(auction)}
-                            >
-                                Deploy
+                                </CardContent>
+                                {auction.status === AuctionStatus.CONFIGURED &&
+                                    <CardActions sx={{ justifyContent: 'flex-end', p: 2 }}>
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            disabled={isProcessing}
+                                            onClick={() => handleDeploy(auction)}
+                                            sx={{
+                                                bgcolor: 'primary.main',
+                                                '&:hover': {
+                                                    bgcolor: 'primary.dark'
+                                                }
+                                            }}
+                                        >
+                                            Deploy
+                                        </Button>
+                                    </CardActions>
+                                }
+                            </ListItemButton>
+                        </Card>
+                    );
+                })}
+            </Box>
 
-                            </Button>
-                        </ListItem>
-                    ))}
-                </List>
-            </Paper>
+            <Modal open={isProcessing} disableAutoFocus>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 280,
+                        bgcolor: 'background.paper',
+                        borderRadius: 2,
+                        p: 3,
+                        boxShadow: 24,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        color: 'text.primary'
+                    }}
+                >
+                    <CircularProgress />
+                    <Typography variant="body1" sx={{ mt: 2 }}>
+                        Transaction pending...
+                    </Typography>
+                </Box>
+            </Modal>
         </Box>
     );
 };
